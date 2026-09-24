@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Observation.Core</RootNamespace>
+    <AssemblyName>Observation.Core</AssemblyName>
+    <PackageId>Observation.Core</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Domain-neutral evidence primitives for observations, confidence, provenance, disagreement, and fusion.</Description>
+    <Authors>Polyhydra Games</Authors>
+    <PackageTags>observation; evidence; confidence; provenance; fusion</PackageTags>
+    <RepositoryUrl>https://github.com/lancer1977/observation-core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/lancer1977/observation-core</PackageProjectUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
