@@ -42,7 +42,7 @@ public sealed class ObservationFusionOptions<T>
     /// <param name="maxAge">The optional maximum inclusive-exclusive age of evidence.</param>
     /// <param name="clock">The clock used for expiry checks.</param>
     /// <param name="valueEquality">The equality comparer used to group values.</param>
-    /// <param name="valueOrder">The deterministic comparer used to order candidate values.</param>
+    /// <param name="valueOrder">The deterministic comparer used to order candidate values; defaults to ordinal for <see cref="string"/> and <see cref="Comparer{T}.Default"/> otherwise.</param>
     public ObservationFusionOptions(
         double minimumConfidenceMargin = 0.2,
         TimeSpan? maxAge = null,
@@ -69,7 +69,7 @@ public sealed class ObservationFusionOptions<T>
         MaxAge = maxAge;
         Clock = clock;
         ValueEquality = valueEquality ?? EqualityComparer<T>.Default;
-        ValueOrder = valueOrder ?? Comparer<T>.Default;
+        ValueOrder = valueOrder ?? DefaultValueOrder();
         UsesDefaultValueOrder = valueOrder is null;
     }
 
@@ -89,6 +89,10 @@ public sealed class ObservationFusionOptions<T>
     public IComparer<T> ValueOrder { get; }
 
     internal bool UsesDefaultValueOrder { get; }
+
+    // Comparer<string>.Default is culture-sensitive, which would make tie-break order machine-dependent.
+    private static IComparer<T> DefaultValueOrder() =>
+        typeof(T) == typeof(string) ? (IComparer<T>)(object)StringComparer.Ordinal : Comparer<T>.Default;
 }
 
 /// <summary>Fuses observations into deterministic, scope-isolated results.</summary>
