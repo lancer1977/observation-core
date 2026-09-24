@@ -10,6 +10,8 @@ Observation Core contains no game, TV, or media concepts; no OCR, VLM, OpenCV, F
 
 `ObservationScope` models an immutable ordered sequence of non-blank scope segments with ordinal equality, comparison, prefix checks, and append support. `Observation<T>` carries a validated value, provenance, timestamp, and finite confidence in the inclusive range `[0, 1]`.
 
+See the [public contract documentation](docs/contracts.md) for field-level validation and JSON details.
+
 ## Build and test
 
 ```sh
