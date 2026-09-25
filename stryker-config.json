@@ -1,0 +1,16 @@
+{
+  "stryker-config": {
+    "project": "src/Observation.Core/Observation.Core.csproj",
+    "test-projects": [
+      "tests/Observation.Core.Tests/Observation.Core.Tests.csproj"
+    ],
+    "mutate": [
+      "**/*.cs"
+    ],
+    "reporters": [
+      "progress",
+      "html",
+      "json"
+    ]
+  }
+}
