@@ -13,4 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Observation.Core/Observation.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Compatibility/Fusion/Fixtures/*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
