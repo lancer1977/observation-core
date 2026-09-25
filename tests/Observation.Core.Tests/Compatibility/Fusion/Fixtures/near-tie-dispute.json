@@ -1,0 +1,12 @@
+{
+  "name": "near-tie-dispute",
+  "aghSourceTestName": "Resolve_SelectsMarginWinnerOrDisputesTie",
+  "options": { "minimumConfidenceMargin": 0.2 },
+  "observations": [
+    { "id": "00000000-0000-0000-0000-000000000005", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "valueJson": "\"open\"", "confidence": 0.7, "observedAt": "2026-09-24T12:00:00Z" },
+    { "id": "00000000-0000-0000-0000-000000000006", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "valueJson": "\"closed\"", "confidence": 0.6, "observedAt": "2026-09-24T12:00:00Z" }
+  ],
+  "expectedResults": [
+    { "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "status": "Disputed", "valueJson": null, "confidence": 0.7, "evidenceIds": ["00000000-0000-0000-0000-000000000005", "00000000-0000-0000-0000-000000000006"] }
+  ]
+}

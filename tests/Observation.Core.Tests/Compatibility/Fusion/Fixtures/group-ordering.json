@@ -1,0 +1,17 @@
+{
+  "name": "group-ordering",
+  "aghSourceTestName": "Resolve_IsInputOrderIndependentAndValidatesMargin",
+  "options": { "minimumConfidenceMargin": 0.2 },
+  "observations": [
+    { "id": "00000000-0000-0000-0000-000000000009", "scope": ["ctx-b", "run-1", "zone-1", "slot-x"], "subject": "subject-2", "predicate": "state", "valueJson": "\"b\"", "confidence": 0.8, "observedAt": "2026-09-24T12:00:00Z" },
+    { "id": "00000000-0000-0000-0000-000000000010", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject-2", "predicate": "state", "valueJson": "\"a\"", "confidence": 0.8, "observedAt": "2026-09-24T12:00:00Z" },
+    { "id": "00000000-0000-0000-0000-000000000016", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject-2", "predicate": "state", "valueJson": "\"b\"", "confidence": 0.8, "observedAt": "2026-09-24T12:00:00Z" },
+    { "id": "00000000-0000-0000-0000-000000000011", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject-1", "predicate": "state", "valueJson": "\"b\"", "confidence": 0.7, "observedAt": "2026-09-24T12:00:00Z" },
+    { "id": "00000000-0000-0000-0000-000000000012", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject-1", "predicate": "state", "valueJson": "\"a\"", "confidence": 0.9, "observedAt": "2026-09-24T12:00:00Z" }
+  ],
+  "expectedResults": [
+    { "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject-1", "predicate": "state", "status": "Resolved", "valueJson": "\"a\"", "confidence": 0.9, "evidenceIds": ["00000000-0000-0000-0000-000000000011", "00000000-0000-0000-0000-000000000012"] },
+    { "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject-2", "predicate": "state", "status": "Disputed", "valueJson": null, "confidence": 0.8, "evidenceIds": ["00000000-0000-0000-0000-000000000010", "00000000-0000-0000-0000-000000000016"] },
+    { "scope": ["ctx-b", "run-1", "zone-1", "slot-x"], "subject": "subject-2", "predicate": "state", "status": "Agreed", "valueJson": "\"b\"", "confidence": 0.8, "evidenceIds": ["00000000-0000-0000-0000-000000000009"] }
+  ]
+}
