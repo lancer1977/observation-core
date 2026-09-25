@@ -12,7 +12,7 @@ its descendants are separate groups.
 | `MaxAge` | `null` | When set, evidence with age `>= MaxAge` or a timestamp in the future is excluded. A negative age limit is invalid. |
 | `Clock` | `null` unless expiry is enabled | Supplies the timestamp for expiry checks. Expiry-enabled options use UTC now when no clock is supplied. |
 | `ValueEquality` | `EqualityComparer<T>.Default` | Defines when observations contribute to the same candidate. |
-| `ValueOrder` | `Comparer<T>.Default` | Orders equal-confidence candidates. Unordered types must supply a comparer. |
+| `ValueOrder` | `StringComparer.Ordinal` for `string`, otherwise `Comparer<T>.Default` | Orders equal-confidence candidates. String ordering is ordinal (never culture-sensitive) so results do not depend on the machine's culture. Unordered types must supply a comparer. |
 
 ## Results
 
