@@ -2,6 +2,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
+    <!-- BenchmarkDotNet's transitive graph resolves some older ranges upward (NU1603); tolerated for this non-shipping project only. -->
+    <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

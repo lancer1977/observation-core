@@ -3,7 +3,12 @@
 These benchmarks cover the fusion, cache, and scope hot paths without changing
 the public API. BenchmarkDotNet is referenced only by the non-packable
 `benchmarks/Observation.Core.Benchmarks` project; the project is not a test
-project and is not run by `dotnet test`.
+project and is not run by `dotnet test`. It is deliberately **not** part of
+`ObservationCore.slnx`, so normal CI builds do not restore BenchmarkDotNet or its
+transitive packages. Its packages are allowed from nuget.org in `nuget.config`
+(the internal feed remains mapped to `Observation.Core` only); the benchmark project
+sets `NoWarn NU1603` because BenchmarkDotNet's dependency graph resolves some
+older ranges upward.
 
 Run the short job from the repository root:
 
