@@ -12,6 +12,14 @@ Observation Core contains no game, TV, or media concepts; no OCR, VLM, OpenCV, F
 
 See the [public contract documentation](docs/contracts.md) for field-level validation and JSON details.
 
+## Consumer documentation
+
+- [Consumer guide](docs/consumers.md)
+- [Package versioning](docs/versioning.md)
+- [AgenticGameHarness migration](docs/migration-agh.md)
+- [SmartTVRelay adoption guidance](docs/adopt-smarttvrelay.md)
+- [Fusion](docs/fusion.md), [cache](docs/cache.md), and [compatibility fixtures](docs/compatibility/)
+
 ## Build and test
 
 ```sh
