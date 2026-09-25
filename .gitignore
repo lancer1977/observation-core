@@ -9,6 +9,7 @@ artifacts/
 
 ## Test output
 TestResults/
+StrykerOutput/
 
 ## IDE files
 .vs/
