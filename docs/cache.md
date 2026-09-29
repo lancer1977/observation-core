@@ -14,6 +14,7 @@ consumer actions.
 | Capacity | Entries use deterministic FIFO eviction. Pending parsers and scope metadata are jointly bounded by the configured capacity. |
 | Cancellation | Caller cancellation stops the caller even if a parser ignores cancellation. Invalidation returns `Invalidated`; parser exceptions propagate after bookkeeping cleanup. |
 | Evidence | The parsed value, timestamp, and optional evidence ID are returned unchanged; cache hits preserve the evidence ID. |
+| `TrackedScopeCount` | The number of scopes with live fingerprint/version bookkeeping right now: every scope that has an outstanding entry or pending parser, even if it has never been invalidated. It is not the number of scopes that have advanced a version. |
 
 Consumers choose their own mapping. For example, a consumer may encode its
 session, scene, and independent slot as scope segments such as
