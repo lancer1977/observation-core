@@ -198,7 +198,14 @@ public sealed class ObservationCache<TInput, TResult>
     public int PendingCount { get { lock (gate) return pending.Count; } }
 
     /// <summary>Gets the number of scopes retained for version and fingerprint safety.</summary>
-    public int TrackedScopeCount { get { lock (gate) return versions.Count; } }
+    /// <remarks>
+    /// Counts <c>fingerprints</c>, not <c>versions</c>: every live scope is recorded in
+    /// <c>fingerprints</c> on its first request, but <c>versions</c> only gains an entry once a
+    /// scope has actually been invalidated or changed version at least once via
+    /// <see cref="AdvanceScope"/>. Counting <c>versions</c> would undercount scopes that have
+    /// been requested but never invalidated.
+    /// </remarks>
+    public int TrackedScopeCount { get { lock (gate) return fingerprints.Count; } }
 
     private IEnumerable<ScopeKey> LiveScopes() => entries.Keys.Select(item => item.Scope).Concat(pending.Select(item => item.Scope)).Concat(fingerprints.Keys).Distinct();
 

@@ -118,6 +118,19 @@ public sealed class ObservationCacheTests
     }
 
     [Fact]
+    public async Task TrackedScopeCountCountsEveryLiveScopeEvenBeforeAnyInvalidation()
+    {
+        var cache = new ObservationCache<string, string>(clock: () => Now);
+        Assert.Equal(0, cache.TrackedScopeCount);
+
+        await cache.GetOrCreateAsync(Request("a") with { Scope = ObservationScope.Of("first") }, (_, _) => Task.FromResult<ObservationCacheValue<string>?>(new("a", Now)));
+        Assert.Equal(1, cache.TrackedScopeCount);
+
+        await cache.GetOrCreateAsync(Request("b") with { Scope = ObservationScope.Of("second") }, (_, _) => Task.FromResult<ObservationCacheValue<string>?>(new("b", Now)));
+        Assert.Equal(2, cache.TrackedScopeCount);
+    }
+
+    [Fact]
     public async Task FifoCapacityBoundsEntriesAndMetadata()
     {
         var cache = new ObservationCache<string, string>(2, () => Now);
