@@ -1,0 +1,90 @@
+name: Publish NuGet
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Package version without a leading v
+        type: string
+        required: true
+      dry_run:
+        description: Build and upload the package without publishing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: observation-core-publish-nuget-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Resolve version
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            version="$INPUT_VERSION"
+          else
+            version="${REF_NAME#v}"
+          fi
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.+][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid package version: $version" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore ObservationCore.slnx
+
+      - name: Build
+        run: dotnet build ObservationCore.slnx -c Release --no-restore
+
+      - name: Test
+        run: dotnet test ObservationCore.slnx -c Release --no-build
+
+      - name: Pack
+        run: dotnet pack src/Observation.Core/Observation.Core.csproj -c Release --no-build -o artifacts/packages -p:PackageVersion=${{ steps.version.outputs.version }}
+
+      - name: Publish to nuget.polyhydragames.com
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run == true) }}
+        env:
+          BAGET_API_KEY: ${{ secrets.BAGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$BAGET_API_KEY"
+          for package in artifacts/packages/*.nupkg; do
+            [ -e "$package" ] || continue
+            dotnet nuget push "$package" \
+              --source https://nuget.polyhydragames.com/v3/index.json \
+              --api-key "$BAGET_API_KEY" \
+              --skip-duplicate
+          done
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ steps.version.outputs.version }}
+          path: artifacts/packages/*
+          if-no-files-found: error

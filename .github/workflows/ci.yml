@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore ObservationCore.slnx
+
+      - name: Build
+        run: dotnet build ObservationCore.slnx -c Release
+
+      - name: Test
+        run: dotnet test ObservationCore.slnx -c Release
+
+      - name: Pack
+        run: dotnet pack src/Observation.Core/Observation.Core.csproj -c Release --no-build -o ./artifacts
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: observation-core-package
+          path: ./artifacts/*.nupkg

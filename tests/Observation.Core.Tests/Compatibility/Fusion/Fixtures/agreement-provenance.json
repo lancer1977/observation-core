@@ -1,0 +1,12 @@
+{
+  "name": "agreement-provenance",
+  "aghSourceTestName": "Resolve_AgreesAndRetainsAllEvidence",
+  "options": { "minimumConfidenceMargin": 0.2 },
+  "observations": [
+    { "id": "00000000-0000-0000-0000-000000000002", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "valueJson": "\"open\"", "confidence": 0.6, "observedAt": "2026-09-24T12:00:00Z" },
+    { "id": "00000000-0000-0000-0000-000000000001", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "valueJson": "\"open\"", "confidence": 0.8, "observedAt": "2026-09-24T12:00:00Z" }
+  ],
+  "expectedResults": [
+    { "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "status": "Agreed", "valueJson": "\"open\"", "confidence": 0.7, "evidenceIds": ["00000000-0000-0000-0000-000000000001", "00000000-0000-0000-0000-000000000002"] }
+  ]
+}

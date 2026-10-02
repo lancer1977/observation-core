@@ -1,0 +1,12 @@
+{
+  "name": "clear-margin-resolution",
+  "aghSourceTestName": "Resolve_SelectsMarginWinnerOrDisputesTie",
+  "options": { "minimumConfidenceMargin": 0.2 },
+  "observations": [
+    { "id": "00000000-0000-0000-0000-000000000003", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "valueJson": "\"open\"", "confidence": 0.9, "observedAt": "2026-09-24T12:00:00Z" },
+    { "id": "00000000-0000-0000-0000-000000000004", "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "valueJson": "\"closed\"", "confidence": 0.5, "observedAt": "2026-09-24T12:00:00Z" }
+  ],
+  "expectedResults": [
+    { "scope": ["ctx-a", "run-1", "zone-1", "slot-x"], "subject": "subject", "predicate": "state", "status": "Resolved", "valueJson": "\"open\"", "confidence": 0.9, "evidenceIds": ["00000000-0000-0000-0000-000000000003", "00000000-0000-0000-0000-000000000004"] }
+  ]
+}
