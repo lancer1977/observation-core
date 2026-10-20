@@ -71,6 +71,21 @@ If a package must change, publish a new SemVer version and update consumers.
 
 The `Publish NuGet.org` workflow is manual and builds a dry-run package by
 default. Its publish job runs only from `main`, requires the dispatch version
-to match the project version, and uses the `nuget-org` environment. Before a
-publication is authorized, configure that environment to allow deployments
-from `main` only and store `NUGET_ORG_API_KEY` as its environment secret.
+to match the project version, and uses the `nuget-org` environment. The package
+job remains a dry run unless the manual `publish` input is enabled.
+
+### Trusted Publishing policy
+
+The public package uses nuget.org Trusted Publishing through GitHub Actions
+OIDC. The GitHub repository owner is `lancer1977`, the repository is
+`observation-core`, the workflow filename is `publish-nuget-org.yml`, and the
+GitHub Actions environment is `nuget-org`. Create the policy under the
+nuget.org profile identified by `NUGET_USER` (or its owning organization), and
+scope it to the `Observation.Core` package.
+
+Configure the repository variable `NUGET_USER` with the nuget.org profile name
+(not an email address). The publish job requests a short-lived API key through
+`NuGet/login` immediately before pushing the package. No long-lived NuGet API
+key secret is used or required. Configure the `nuget-org` environment to allow
+publication from `main` only, and create the matching Trusted Publishing policy
+on nuget.org before the first authorized publication.
