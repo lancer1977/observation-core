@@ -25,25 +25,34 @@ are a guard against accidental semantic changes.
 
 ## Package feed
 
-The internal feed is:
+The planned public preview feed is nuget.org. Update consumers only after the
+requested package version is published and independently verified:
+
+`https://api.nuget.org/v3/index.json`
+
+Install the package with:
+
+```sh
+dotnet add package Observation.Core --version 0.1.0-preview.3
+```
+
+Consumers that use package source mapping should map `Observation.Core` to
+nuget.org. The repository's internal BaGet feed remains available for existing
+private consumers during the transition:
 
 `https://nuget.polyhydragames.com/v3/index.json`
 
-It supports anonymous package reads. A consumer that wants to restrict this
-package to that feed can use NuGet package source mapping:
+The mapping for a consumer that allows public package reads can be:
 
 ```xml
 <configuration>
   <packageSources>
     <clear />
-    <add key="polyhydra" value="https://nuget.polyhydragames.com/v3/index.json" />
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
   <packageSourceMapping>
-    <packageSource key="polyhydra">
-      <package pattern="Observation.Core" />
-    </packageSource>
     <packageSource key="nuget.org">
+      <package pattern="Observation.Core" />
       <package pattern="Microsoft.*" />
       <package pattern="xunit" />
       <package pattern="xunit.*" />
@@ -53,6 +62,15 @@ package to that feed can use NuGet package source mapping:
 ```
 
 The mapping is an example policy; add the consumer's other dependency
-patterns to `nuget.org` as needed, while leaving `Observation.Core` mapped
-only to `polyhydra`. Never overwrite a published package version.
+patterns to `nuget.org` as needed. Existing consumers can continue using the
+internal feed until their feed and version transition is scheduled. Never
+overwrite a published package version.
 If a package must change, publish a new SemVer version and update consumers.
+
+## Publication workflow
+
+The `Publish NuGet.org` workflow is manual and builds a dry-run package by
+default. Its publish job runs only from `main`, requires the dispatch version
+to match the project version, and uses the `nuget-org` environment. Before a
+publication is authorized, configure that environment to allow deployments
+from `main` only and store `NUGET_ORG_API_KEY` as its environment secret.
