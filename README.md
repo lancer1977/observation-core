@@ -15,7 +15,8 @@ See the [architecture and dependency guardrails](docs/guardrails.md) for the enf
 
 ## Install
 
-The public preview package is available from nuget.org:
+The planned public preview package will be available from nuget.org after
+publication is verified:
 
 ```sh
 dotnet add package Observation.Core --version 0.1.0-preview.3

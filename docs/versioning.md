@@ -25,7 +25,8 @@ are a guard against accidental semantic changes.
 
 ## Package feed
 
-Public preview packages are published to nuget.org:
+The planned public preview feed is nuget.org. Update consumers only after the
+requested package version is published and independently verified:
 
 `https://api.nuget.org/v3/index.json`
 
@@ -65,3 +66,11 @@ patterns to `nuget.org` as needed. Existing consumers can continue using the
 internal feed until their feed and version transition is scheduled. Never
 overwrite a published package version.
 If a package must change, publish a new SemVer version and update consumers.
+
+## Publication workflow
+
+The `Publish NuGet.org` workflow is manual and builds a dry-run package by
+default. Its publish job runs only from `main`, requires the dispatch version
+to match the project version, and uses the `nuget-org` environment. Before a
+publication is authorized, configure that environment to allow deployments
+from `main` only and store `NUGET_ORG_API_KEY` as its environment secret.

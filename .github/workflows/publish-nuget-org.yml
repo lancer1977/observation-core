@@ -26,10 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
         with:
           dotnet-version: 10.0.x
 
@@ -41,6 +41,11 @@ jobs:
           set -euo pipefail
           if [[ ! "$INPUT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.+][0-9A-Za-z.-]+)?$ ]]; then
             echo "Invalid package version: $INPUT_VERSION" >&2
+            exit 1
+          fi
+          project_version="$(dotnet msbuild src/Observation.Core/Observation.Core.csproj -getProperty:PackageVersion -p:Configuration=Release -nologo | tail -n 1)"
+          if [[ "$INPUT_VERSION" != "$project_version" ]]; then
+            echo "Input version $INPUT_VERSION does not match project version $project_version" >&2
             exit 1
           fi
           echo "version=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
@@ -69,8 +74,29 @@ jobs:
           grep -F '<readme>README.md</readme>' package.nuspec
           unzip -l "${package[0]}" | grep -F 'README.md'
 
+      - name: Upload package artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: packages-${{ steps.version.outputs.version }}
+          path: artifacts/packages/*
+          if-no-files-found: error
+
+  publish:
+    if: ${{ inputs.publish == true && github.ref == 'refs/heads/main' }}
+    needs: package
+    runs-on: ubuntu-latest
+    environment: nuget-org
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+
+      - name: Download package artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: packages-${{ inputs.version }}
+          path: artifacts/packages
+
       - name: Publish to nuget.org
-        if: ${{ inputs.publish == true }}
         env:
           NUGET_ORG_API_KEY: ${{ secrets.NUGET_ORG_API_KEY }}
         run: |
@@ -79,13 +105,5 @@ jobs:
           for package in artifacts/packages/*.nupkg; do
             dotnet nuget push "$package" \
               --source https://api.nuget.org/v3/index.json \
-              --api-key "$NUGET_ORG_API_KEY" \
-              --skip-duplicate
+              --api-key "$NUGET_ORG_API_KEY"
           done
-
-      - name: Upload package artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: packages-${{ steps.version.outputs.version }}
-          path: artifacts/packages/*
-          if-no-files-found: error
