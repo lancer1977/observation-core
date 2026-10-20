@@ -1,0 +1,91 @@
+name: Publish NuGet.org
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Package version without a leading v
+        type: string
+        required: true
+        default: 0.1.0-preview.3
+      publish:
+        description: Publish the package to nuget.org
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: observation-core-publish-nuget-org-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$INPUT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.+][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid package version: $INPUT_VERSION" >&2
+            exit 1
+          fi
+          echo "version=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore ObservationCore.slnx
+
+      - name: Build
+        run: dotnet build ObservationCore.slnx -c Release --no-restore
+
+      - name: Test
+        run: dotnet test ObservationCore.slnx -c Release --no-build
+
+      - name: Pack
+        run: dotnet pack src/Observation.Core/Observation.Core.csproj -c Release --no-build -o artifacts/packages -p:PackageVersion=${{ steps.version.outputs.version }}
+
+      - name: Inspect package
+        run: |
+          set -euo pipefail
+          package=(artifacts/packages/*.nupkg)
+          test "${#package[@]}" -eq 1
+          unzip -t "${package[0]}"
+          unzip -p "${package[0]}" Observation.Core.nuspec > package.nuspec
+          grep -F '<id>Observation.Core</id>' package.nuspec
+          grep -F '<version>${{ steps.version.outputs.version }}</version>' package.nuspec
+          grep -F '<readme>README.md</readme>' package.nuspec
+          unzip -l "${package[0]}" | grep -F 'README.md'
+
+      - name: Publish to nuget.org
+        if: ${{ inputs.publish == true }}
+        env:
+          NUGET_ORG_API_KEY: ${{ secrets.NUGET_ORG_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$NUGET_ORG_API_KEY"
+          for package in artifacts/packages/*.nupkg; do
+            dotnet nuget push "$package" \
+              --source https://api.nuget.org/v3/index.json \
+              --api-key "$NUGET_ORG_API_KEY" \
+              --skip-duplicate
+          done
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ steps.version.outputs.version }}
+          path: artifacts/packages/*
+          if-no-files-found: error

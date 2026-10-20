@@ -13,6 +13,17 @@ Observation Core contains no game, TV, or media concepts; no OCR, VLM, OpenCV, F
 See the [public contract documentation](docs/contracts.md) for field-level validation and JSON details.
 See the [architecture and dependency guardrails](docs/guardrails.md) for the enforced dependency and domain-neutrality rules.
 
+## Install
+
+The public preview package is available from nuget.org:
+
+```sh
+dotnet add package Observation.Core --version 0.1.0-preview.3
+```
+
+See the [package versioning policy](docs/versioning.md) for feed mapping and
+the transition from the internal BaGet feed.
+
 ## Consumer documentation
 
 - [Consumer guide](docs/consumers.md)
