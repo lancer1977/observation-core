@@ -116,10 +116,13 @@ jobs:
           user: ${{ vars.NUGET_USER }}
 
       - name: Publish to nuget.org
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
           set -euo pipefail
+          test -n "$NUGET_API_KEY"
           for package in artifacts/packages/*.nupkg; do
             dotnet nuget push "$package" \
               --source https://api.nuget.org/v3/index.json \
-              --api-key "${{ steps.login.outputs.NUGET_API_KEY }}"
+              --api-key "$NUGET_API_KEY"
           done

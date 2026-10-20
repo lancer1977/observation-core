@@ -77,10 +77,11 @@ job remains a dry run unless the manual `publish` input is enabled.
 ### Trusted Publishing policy
 
 The public package uses nuget.org Trusted Publishing through GitHub Actions
-OIDC. The policy owner is `lancer1977`, the repository is `observation-core`,
-the workflow filename is `publish-nuget-org.yml`, and the GitHub Actions
-environment is `nuget-org`. Scope the policy to the `Observation.Core`
-package.
+OIDC. The GitHub repository owner is `lancer1977`, the repository is
+`observation-core`, the workflow filename is `publish-nuget-org.yml`, and the
+GitHub Actions environment is `nuget-org`. Create the policy under the
+nuget.org profile identified by `NUGET_USER` (or its owning organization), and
+scope it to the `Observation.Core` package.
 
 Configure the repository variable `NUGET_USER` with the nuget.org profile name
 (not an email address). The publish job requests a short-lived API key through
